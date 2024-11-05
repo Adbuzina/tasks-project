@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block body %}
+<section class="header">
+  <h2 class="title">Вход</h2>
+  <div class="row">
+    <div class="three columns value-prop"></div>
+    <div class="six columns">
+      <form method=post>
+        {% csrf_token %}
+        <dl>
+          <dd>{{ form }}
+          <dt><input type="submit" class="button button-primary" value="Вход">
+        </dl>
+      </form>
+      <p>Новый пользователь? <a href="{% url 'auth:register' %}">Регистрация</a>.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}

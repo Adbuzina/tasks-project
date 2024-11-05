@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load lists_extras %}
+
+{% block js %}
+<script src="{% static 'lists/js/jquery.tablesorter.min.js' %}"></script>
+<script type="text/javascript" id="js">
+$(document).ready(function() {
+  var timeExtraction = function(node) {
+    if ($(node).attr('data-time-in-seconds') !== undefined) {
+      return '-' + node.getAttribute('data-time-in-seconds');
+    } else {
+      return node.innerHTML;
+    }
+  }
+  $("#tasklist-overview-table").tablesorter({
+    textExtraction: timeExtraction
+  });
+});
+</script>
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'lists/css/table.css' %}"> {% endblock %}
+
+{% block body %}
+<section class="header">
+  <h2 class="title">Задачи</h2>
+  <div class="row">
+    <div class="three columns value-prop"></div>
+    <div class="six columns">
+      <form action="{% url 'lists:add_tasklist' %}" method=post>
+        {% csrf_token %}
+        <dl>
+          <dd>{{ form }}
+          <dt><input type="submit" value="Submit">
+        </dl>
+      </form>
+    </div>
+  </div>
+  <div class="row">
+    <div class="u-full-width">
+      <h6 class="docs-header tasklist-overview">All your tasklists</h6>
+      <table id="tasklist-overview-table" class="tablesorter">
+        <thead>
+          <tr>
+            <th class='tasklist-title'>Tasklist title</th>
+            <th># Открыть</th>
+            <th># Закрыть</th>
+            <th class="datetime">Дата</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for tasklist in user.tasklists.all %}
+          <tr>
+            <td class='tasklist-title'><a href="{% url 'lists:tasklist' tasklist_id=tasklist.id %}">{{ tasklist.title }}</a></td>
+            <td>{{ tasklist.count_open }}</td>
+            <td>{{ tasklist.count_finished }}</td>
+            <td data-time-in-seconds="{{ tasklist.created_at|in_seconds }}">{{ tasklist.created_at|humanize }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock %}

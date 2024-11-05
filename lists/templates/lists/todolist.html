@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block js %}
+<script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
+<script src="{% static 'lists/js/lists.js' %}"></script>
+{% endblock %}
+
+{% block body %}
+<section class="header">
+  <div class="row">
+    <div class="three columns value-prop"></div>
+    <div class="six columns">
+      <div class="title">{{tasklist.title}}</div>
+      <form action="{% url 'lists:add_task' tasklist.id %}" method=post>
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Добавить">
+      </form>
+    </div>
+    <div class="row">
+      <div class="one-half column open-tasks">
+        <h6 class="docs-header open-tasks">{{ tasklist.count_open }} открыто</h6>
+        <ul>
+          {% for task in tasklist.tasks.all %}
+            {% if not task.is_finished %}
+              <li><input type="checkbox" id="checkbox" data-task-id="{{ task.id }}"> {{ task.description }}</li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="one-half column finished-tasks">
+        <h6 class="docs-header finished-tasks">{{ tasklist.count_finished }} завершено</h6>
+        <ul>
+          {% for task in tasklist.tasks.all %}
+            {% if task.is_finished %}
+            <li><input type="checkbox" id="checkbox" data-task-id="{{ task.id }}" checked="checked"> {{ task.description }}</li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
